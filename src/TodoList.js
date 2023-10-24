@@ -1,49 +1,50 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addTodo, toggleTodo } from "./actions";
 import "./TodoList.css";
 
 const TodoList = () => {
-    const [todos, setTodos] = useState([]);
+    const todos = useSelector((state) => state.todos);
+    const dispatch = useDispatch();
     const [newTodo, setNewTodo] = useState("");
 
     const handleInputChange = (e) => {
         setNewTodo(e.target.value);
     };
 
-    const addTodo = () => {
+    const handleAddTodo = () => {
         if (newTodo.trim() !== "") {
-            setTodos([...todos, { text: newTodo, completed: false }]);
+            dispatch(addTodo(newTodo));
             setNewTodo("");
         }
     };
 
-    const toggleTodo = (index) => {
-        const updatedTodos = [...todos];
-        updatedTodos[index].completed = !updatedTodos[index].completed;
-        setTodos(updatedTodos);
+    const handleToggleTodo = (index) => {
+        dispatch(toggleTodo(index));
     };
 
     return (
         <div>
             <h1>TODO LIST</h1>
             <ul>
-                    {todos.map((todo, index) => (
-                        <li
-                            key={index}
-                            style={{ textDecoration: todo.completed ? "line-through" : "none" }}
-                            onClick={() => toggleTodo(index)}
-                        >
-                            {todo.text}
-                        </li>
-                    ))}
+                {todos.map((todo, index) => (
+                    <li
+                        key={index}
+                        style={{ textDecoration: todo.completed ? "line-through" : "none" }}
+                        onClick={() => handleToggleTodo(index)}
+                    >
+                        {todo.text}
+                    </li>
+                ))}
             </ul>
-            <div class="new-note">
+            <div className="new-note">
                 <input
                     type="text"
                     value={newTodo}
                     onChange={handleInputChange}
                     placeholder="New note..."
                 />
-                <button onClick={addTodo}>ADD</button>
+                <button onClick={handleAddTodo}>ADD</button>
             </div>
         </div>
     );
